@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0f2a6b">
+<meta name="description" content="2024级本科药学（需排名名单）2025-2026学年学分加权平均分排名查询">
+<title>药本考试成绩排名及查询</title>
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+  --ink:#13224d;
+  --ink-2:#5b6b93;
+  --line:#e3eaf6;
+  --blue:#2563eb;
+  --blue-2:#0ea5e9;
+  --cyan:#14b8a6;
+  --gold:#f59e0b;
+  --gold-2:#fbbf24;
+  --radius:18px;
+  --shadow:0 8px 28px rgba(24,48,112,.10);
+  --safe-b:env(safe-area-inset-bottom, 0px);
+  --safe-t:env(safe-area-inset-top, 0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);
+  min-height:100vh;padding-bottom:calc(96px + var(--safe-b));
+  -webkit-font-smoothing:antialiased;
+}
+button,input{font-family:inherit;font-size:inherit}
+.hidden{display:none!important}
+
+/* ===== Hero ===== */
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#0b1f55 0%,#12307f 42%,#0e7490 100%);
+  color:#fff;padding:calc(30px + var(--safe-t)) 22px 26px;
+  border-radius:0 0 34px 34px;
+}
+.hero::before,.hero::after{
+  content:"";position:absolute;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.16),transparent 70%);
+}
+.hero::before{width:230px;height:230px;top:-70px;right:-60px}
+.hero::after{width:170px;height:170px;bottom:-70px;left:-50px;background:radial-gradient(circle,rgba(14,165,233,.35),transparent 70%)}
+.hero .kicker{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;letter-spacing:1px;color:#cfe6ff;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+  padding:5px 12px;border-radius:999px;backdrop-filter:blur(6px);
+}
+.hero h1{font-size:27px;font-weight:800;letter-spacing:.5px;margin:14px 0 8px;line-height:1.25;text-shadow:0 2px 14px rgba(0,0,0,.18)}
+.hero .sub{font-size:13.5px;color:#d6e6ff;line-height:1.6;opacity:.92}
+.hero .stats{
+  display:flex;gap:10px;margin-top:20px;position:relative;z-index:1;
+}
+.hero .stat{
+  flex:1;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:14px;padding:10px 6px;text-align:center;backdrop-filter:blur(8px);
+}
+.hero .stat b{display:block;font-size:20px;font-weight:800;letter-spacing:.5px}
+.hero .stat span{font-size:11px;color:#c8dcf8;display:block;margin-top:2px}
+
+/* ===== 主容器 ===== */
+.wrap{max-width:520px;margin:0 auto;padding:0 16px}
+
+/* ===== Tab ===== */
+.tabs{
+  display:flex;gap:8px;margin:16px 0 14px;position:sticky;top:0;z-index:20;
+  background:linear-gradient(180deg,var(--bg) 78%,rgba(238,243,251,0));
+  padding:8px 0 10px;
+}
+.tab{
+  flex:1;border:1px solid var(--line);background:var(--card);
+  color:var(--ink-2);border-radius:14px;padding:11px 0;text-align:center;
+  font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(24,48,112,.05);
+  transition:all .22s ease;display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.tab svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tab.active{
+  background:linear-gradient(135deg,#2563eb,#0ea5e9);border-color:transparent;color:#fff;
+  box-shadow:0 6px 18px rgba(37,99,235,.35);
+}
+
+/* ===== 通用卡片 ===== */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.banner{
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#eef6ff,#e8faf6);
+  border:1px solid #d6e9ff;border-radius:14px;padding:12px 14px;margin-bottom:14px;
+  font-size:13px;color:#23507f;line-height:1.55;
+}
+.banner svg{width:20px;height:20px;flex:none;stroke:#2563eb;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===== 班级筛选 ===== */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink-2);
+  border-radius:999px;padding:7px 14px;font-size:12.5px;cursor:pointer;transition:all .18s ease;
+}
+.chip.active{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+
+/* ===== TOP3 ===== */
+.top3{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+.top3 .podium{
+  display:flex;align-items:center;gap:14px;padding:16px;
+  border-radius:var(--radius);border:1px solid var(--line);box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.podium .medal{
+  width:52px;height:52px;border-radius:50%;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:800;color:#fff;position:relative;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.15),0 4px 12px rgba(0,0,0,.12);
+}
+.podium:nth-child(1){background:linear-gradient(135deg,#fffaf0,#fff3d6)}
+.podium:nth-child(1) .medal{background:linear-gradient(150deg,#fbbf24,#d97706)}
+.podium:nth-child(2){background:linear-gradient(135deg,#f8fafc,#eef2f7)}
+.podium:nth-child(2) .medal{background:linear-gradient(150deg,#cbd5e1,#64748b)}
+.podium:nth-child(3){background:linear-gradient(135deg,#fff8f0,#fdeeda)}
+.podium:nth-child(3) .medal{background:linear-gradient(150deg,#fb923c,#c2570a)}
+.podium .crown{position:absolute;top:-2px;left:14px;font-size:18px;opacity:.9}
+.podium .info{flex:1;min-width:0}
+.podium .info .nm{font-size:17px;font-weight:700}
+.podium .info .cls{font-size:12px;color:var(--ink-2);margin-top:3px}
+.podium .sc{text-align:right}
+.podium .sc b{display:block;font-size:22px;font-weight:800;letter-spacing:.3px}
+.podium .sc span{font-size:11px;color:var(--ink-2)}
+
+/* ===== 榜单列表 ===== */
+.list{display:flex;flex-direction:column;gap:8px}
+.row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:12px 14px;box-shadow:0 2px 8px rgba(24,48,112,.04);
+  animation:rise .35s ease both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.rank-badge{
+  width:38px;height:38px;border-radius:12px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:15px;color:#fff;
+  background:linear-gradient(150deg,#7c93c4,#4a6294);
+}
+.rank-badge.hot{background:linear-gradient(150deg,#38bdf8,#2563eb);box-shadow:0 4px 10px rgba(37,99,235,.3)}
+.rank-badge.top{background:linear-gradient(150deg,#fbbf24,#d97706)}
+.row .info{flex:1;min-width:0}
+.row .info .nm{font-size:15px;font-weight:600}
+.row .info .cls{font-size:11.5px;color:var(--ink-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .sc{text-align:right}
+.row .sc b{font-size:16px;font-weight:800;color:var(--blue);letter-spacing:.3px}
+.row .sc b.gold{color:#d97706}
+.row .sc span{font-size:10.5px;color:var(--ink-2);display:block;margin-top:1px}
+.pctbar{height:4px;border-radius:99px;background:#e6edf9;margin-top:6px;overflow:hidden}
+.pctbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#2563eb,#0ea5e9)}
+
+/* ===== 榜单尾部说明 ===== */
+.board-foot{
+  margin-top:14px;text-align:center;font-size:12px;color:var(--ink-2);line-height:1.8;
+  background:var(--card);border:1px dashed #d3def2;border-radius:14px;padding:12px;
+}
+
+/* ===== 个人查询 ===== */
+.query-form{padding:20px 18px;margin-bottom:14px}
+.query-form h2{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
+.query-form h2 svg{width:20px;height:20px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.query-form .desc{font-size:12.5px;color:var(--ink-2);margin:6px 0 16px;line-height:1.6}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:#33436e}
+.field .ipt{
+  display:flex;align-items:center;gap:10px;
+  border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;background:#f8fafd;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+.field .ipt:focus-within{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12);background:#fff}
+.field .ipt svg{width:19px;height:19px;stroke:#9db0d4;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.field input{border:none;outline:none;background:transparent;flex:1;font-size:16px;color:var(--ink);letter-spacing:.5px}
+.field input::placeholder{color:#aab7d4;letter-spacing:0}
+.field .tip{font-size:11.5px;color:#8b9ac0;margin-top:6px}
+.btn-query{
+  width:100%;border:none;cursor:pointer;color:#fff;font-size:16px;font-weight:700;
+  padding:14px 0;border-radius:14px;margin-top:6px;letter-spacing:2px;
+  background:linear-gradient(135deg,#2563eb,#0ea5e9);
+  box-shadow:0 8px 20px rgba(37,99,235,.35);
+  transition:transform .12s ease, box-shadow .2s ease;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-query svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.btn-query:active{transform:scale(.97)}
+.btn-query.loading{opacity:.7;pointer-events:none}
+
+/* 结果卡片 */
+.result-card{margin-bottom:14px;overflow:hidden;animation:rise .4s ease both}
+.result-card .rc-head{
+  background:linear-gradient(135deg,#2563eb,#0ea5e9);color:#fff;
+  padding:16px 18px;display:flex;align-items:center;gap:12px;
+}
+.result-card .rc-head .big-r{font-size:34px;font-weight:800;letter-spacing:1px;line-height:1}
+.result-card .rc-head .big-r small{font-size:14px;font-weight:600;opacity:.85}
+.result-card .rc-head .rc-t{flex:1}
+.result-card .rc-head .rc-t b{display:block;font-size:17px}
+.result-card .rc-head .rc-t span{font-size:12px;opacity:.85}
+.result-card .rc-body{padding:16px 18px;background:var(--card)}
+.rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rc-cell{background:#f5f8fd;border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+.rc-cell span{font-size:11.5px;color:var(--ink-2);display:block}
+.rc-cell b{font-size:16px;margin-top:3px;display:block}
+.rc-cell b.gold{color:#d97706}
+.rc-note{font-size:12px;color:var(--ink-2);line-height:1.7;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.rc-note b{color:var(--blue)}
+.error-card{
+  background:#fff7f7;border:1px solid #fdd;border-radius:var(--radius);
+  padding:18px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;
+  animation:rise .3s ease both;
+}
+.error-card svg{width:22px;height:22px;flex:none;stroke:#e11d48;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:1px}
+.error-card b{display:block;font-size:15px;color:#b91c1c;margin-bottom:4px}
+.error-card p{font-size:12.5px;color:#b64;line-height:1.6}
+.rules{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 18px;font-size:12.5px;color:var(--ink-2);line-height:1.9;
+}
+.rules h3{font-size:14px;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.rules h3 svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rules li{margin-left:18px}
+
+/* ===== 底部悬浮导航 ===== */
+.bottom-nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  padding:10px 16px calc(10px + var(--safe-b));
+  background:linear-gradient(180deg,rgba(255,255,255,0),rgba(238,243,251,.96) 30%);
+}
+.bottom-nav .inner{
+  max-width:520px;margin:0 auto;display:flex;gap:10px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(14px);
+  border:1px solid rgba(227,234,246,.9);border-radius:20px;padding:8px;
+  box-shadow:0 -4px 24px rgba(24,48,112,.12);
+}
+.bn-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:9px 0 7px;border-radius:14px;cursor:pointer;color:var(--ink-2);
+  font-size:11px;font-weight:600;transition:all .2s ease;border:none;background:transparent;
+}
+.bn-item svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bn-item.active{color:var(--blue);background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(14,165,233,.12))}
+
+footer.site{
+  text-align:center;font-size:11.5px;color:#9aa9c8;padding:18px 20px 6px;line-height:1.8;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Hero ===== -->
+<header class="hero">
+  <div>
+    <span class="kicker">🎓 药学院 · 2024级本科药学</span>
+    <h1>药本考试成绩排名及查询</h1>
+    <p class="sub" id="hero-sub">2025—2026学年 · 学分加权平均分排名</p>
+    <div class="stats" id="hero-stats"></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===== Tab ===== -->
+  <nav class="tabs" role="tablist" aria-label="功能切换">
+    <button class="tab active" role="tab" aria-selected="true" id="tab-board" aria-controls="panel-board">
+      <svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M6 5H4a2 2 0 0 0 0 4h2M18 5h2a2 2 0 0 1 0 4h-2M5 13h14"/></svg>
+      排行榜
+    </button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-query" aria-controls="panel-query">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      个人查询
+    </button>
+  </nav>
+
+  <!-- ===== 排行榜面板 ===== -->
+  <section id="panel-board" role="tabpanel" aria-labelledby="tab-board">
+    <div class="banner">
+      <svg viewBox="0 0 24 24"><path d="M12 3 4 21M12 3l8 18M12 3v18"/><path d="M7 15h10"/></svg>
+      <div>公开展示名单内排名前 <b>50</b> 名同学；其余同学请通过「个人查询」核验后查看本人成绩与排名。</div>
+    </div>
+    <div class="chips" id="chips" role="tablist" aria-label="班级筛选"></div>
+    <div class="top3" id="top3"></div>
+    <div class="list" id="board-list"></div>
+    <div class="board-foot" id="board-foot"></div>
+  </section>
+
+  <!-- ===== 个人查询面板 ===== -->
+  <section id="panel-query" class="hidden" role="tabpanel" aria-labelledby="tab-query">
+    <form class="card query-form" id="query-form" novalidate>
+      <h2>
+        <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 3.5 2 5.4 4 8s1.5 5 3 5 1-2.4 3-5 4-4.5 4-8a7 7 0 0 0-7-7Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        查询我的成绩
+      </h2>
+      <p class="desc">输入本人<b>姓名</b>与<b>身份证后四位</b>进行身份核验，即可查询本人的学分加权平均分与年级排名。</p>
+
+      <div class="field">
+        <label for="q-name">姓名</label>
+        <div class="ipt">
+          <svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="q-name" placeholder="请输入姓名" autocomplete="off" maxlength="10">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="q-id4">身份证后四位</label>
+        <div class="ipt">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h.01M11 9h.01M15 9h2M7 13h.01M11 13h.01M15 13h2M7 17h10"/></svg>
+          <input type="text" id="q-id4" placeholder="如 0018" autocomplete="off" maxlength="4" inputmode="text" pattern="[0-9A-Za-z]{4}">
+        </div>
+        <p class="tip">身份证号后 4 位（含末尾 X 时为大写或小写均可），仅用于身份核验，不采集完整证件号。</p>
+      </div>
+
+      <button type="submit" class="btn-query" id="btn-query">
+        <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+        立即查询
+      </button>
+    </form>
+
+    <div id="result-area"></div>
+
+    <div class="rules">
+      <h3>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11v5"/></svg>
+        查询规则说明
+      </h3>
+      <ul>
+        <li>排名范围：需排名名单内全部 <b id="rule-total"></b> 名学生。</li>
+        <li>排名依据：2025—2026 学年学分加权平均分（同分同名次）。</li>
+        <li>公开展示前 50 名，其余同学通过姓名 + 身份证后四位核验后查询。</li>
+        <li>若提示「暂无成绩数据」，表示该生本学年成绩表中未查到记录，请与辅导员联系核实。</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="site">
+    数据来源：2024级学生2025-2026学年成绩（药学院）<br>
+    数据截至 2026-09-16 · 仅供查询参考
+  </footer>
+</div>
+
+<!-- ===== 底部悬浮导航 ===== -->
+<nav class="bottom-nav" aria-label="页面导航">
+  <div class="inner">
+    <button class="bn-item active" data-panel="board">
+      <svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M6 5H4a2 2 0 0 0 0 4h2M18 5h2a2 2 0 0 1 0 4h-2M5 13h14"/></svg>
+      排行榜
+    </button>
+    <button class="bn-item" data-panel="query">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      个人查询
+    </button>
+  </div>
+</nav>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  "use strict";
+  var D = window.RANK_DATA;
+  var M = D.meta, S = D.students;
+  var TOP = 50;
+  var allClasses = Array.from(new Set(S.map(function(s){return s.c;}))).sort();
+
+  /* ---------- Hero 统计 ---------- */
+  var statsEl = document.getElementById('hero-stats');
+  statsEl.innerHTML =
+    '<div class="stat"><b>'+M.total+'</b><span>名单参评</span></div>'+
+    '<div class="stat"><b>'+M.withScore+'</b><span>已出成绩</span></div>'+
+    '<div class="stat"><b>'+allClasses.length+'</b><span>覆盖班级</span></div>';
+  document.getElementById('rule-total').textContent = M.total;
+
+  /* ---------- Tab 切换 ---------- */
+  function switchPanel(panel){
+    var board = document.getElementById('panel-board');
+    var query = document.getElementById('panel-query');
+    var tabs = document.querySelectorAll('.tab');
+    var bns = document.querySelectorAll('.bn-item');
+    if(panel === 'board'){
+      board.classList.remove('hidden');
+      query.classList.add('hidden');
+      tabs[0].classList.add('active'); tabs[0].setAttribute('aria-selected','true');
+      tabs[1].classList.remove('active'); tabs[1].setAttribute('aria-selected','false');
+      bns[0].classList.add('active'); bns[1].classList.remove('active');
+    }else{
+      query.classList.remove('hidden');
+      board.classList.add('hidden');
+      tabs[1].classList.add('active'); tabs[1].setAttribute('aria-selected','true');
+      tabs[0].classList.remove('active'); tabs[0].setAttribute('aria-selected','false');
+      bns[1].classList.add('active'); bns[0].classList.remove('active');
+      setTimeout(function(){ var n = document.getElementById('q-name'); if(n && n.isConnected){ try{n.focus({preventScroll:true});}catch(e){n.focus();} } }, 60);
+    }
+  }
+  document.getElementById('tab-board').addEventListener('click', function(){ switchPanel('board'); });
+  document.getElementById('tab-query').addEventListener('click', function(){ switchPanel('query'); });
+  document.querySelectorAll('.bn-item').forEach(function(b){
+    b.addEventListener('click', function(){ switchPanel(b.getAttribute('data-panel')); });
+  });
+
+  /* ---------- 班级筛选 ---------- */
+  var curClass = '全部';
+  var chipsEl = document.getElementById('chips');
+  chipsEl.innerHTML = '<button class="chip active" data-c="全部">全部班级</button>' +
+    allClasses.map(function(c){ return '<button class="chip" data-c="'+c.replace(/"/g,'&quot;')+'">'+c.replace(/2024本科药学/g,'')+'</button>'; }).join('');
+  chipsEl.addEventListener('click', function(e){
+    var btn = e.target.closest('.chip');
+    if(!btn) return;
+    curClass = btn.getAttribute('data-c');
+    chipsEl.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('active', c === btn); });
+    renderBoard();
+  });
+
+  /* ---------- 榜单渲染 ---------- */
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+
+  function medalCls(r){
+    if(r === 1) return 'top';
+    if(r <= 10) return 'hot';
+    return '';
+  }
+  function medalText(r){
+    if(r <= 3) return String(r);
+    return String(r);
+  }
+
+  function renderBoard(){
+    var ranked = S.filter(function(s){ return s.r !== null; });
+    var pool = curClass === '全部' ? ranked : ranked.filter(function(s){ return s.c === curClass; });
+    var show = pool.slice(0, TOP);
+    var top3 = show.slice(0, 3);
+    var rest = show.slice(3);
+
+    /* TOP3 */
+    var top3El = document.getElementById('top3');
+    if(top3.length === 0){
+      top3El.innerHTML = '';
+    }else{
+      top3El.innerHTML = top3.map(function(s, i){
+        var crown = i === 0 ? '👑 ' : '';
+        return (
+          '<div class="podium">'+
+            '<div class="medal">'+medalText(s.r)+'</div>'+
+            '<div class="info">'+
+              '<div class="nm">'+crown+esc(s.n)+'</div>'+
+              '<div class="cls">'+esc(s.c)+'</div>'+
+            '</div>'+
+            '<div class="sc"><b>'+s.s.toFixed(2)+'</b><span>学分加权平均分</span></div>'+
+          '</div>'
+        );
+      }).join('');
+    }
+
+    /* 列表 */
+    var listEl = document.getElementById('board-list');
+    listEl.innerHTML = rest.map(function(s, i){
+      var pct = Math.max(2, Math.round((1 - (s.r - 1) / M.withScore) * 100));
+      return (
+        '<div class="row" style="animation-delay:'+(i*28)+'ms">'+
+          '<div class="rank-badge '+medalCls(s.r)+'">'+s.r+'</div>'+
+          '<div class="info">'+
+            '<div class="nm">'+esc(s.n)+'</div>'+
+            '<div class="cls">'+esc(s.c)+'</div>'+
+            '<div class="pctbar"><i style="width:'+pct+'%"></i></div>'+
+          '</div>'+
+          '<div class="sc"><b class="'+(s.r<=3?'gold':'')+'">'+s.s.toFixed(2)+'</b><span>学分加权平均分</span></div>'+
+        '</div>'
+      );
+    }).join('');
+
+    /* 尾部说明 */
+    var foot = document.getElementById('board-foot');
+    if(curClass === '全部'){
+      foot.innerHTML = '已展示排名前 '+show.length+' 名 · 名单内共 '+M.withScore+' 人有成绩（同分同名次）<br>'+
+        '前 50 名之外的同学请通过「个人查询」查看本人排名';
+    }else{
+      foot.innerHTML = '当前班级「'+esc(curClass)+'」前 '+show.length+' 名 · 其他班级同学请切换筛选查看';
+    }
+  }
+
+  /* ---------- 个人查询 ---------- */
+  var form = document.getElementById('query-form');
+  var area = document.getElementById('result-area');
+  var btnQ = document.getElementById('btn-query');
+
+  function setResult(html){ area.innerHTML = html; }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('q-name').value.trim();
+    var id4 = document.getElementById('q-id4').value.trim().toUpperCase();
+    var errs = [];
+    if(!name) errs.push('请输入姓名');
+    if(!/^[0-9]{3}[0-9X]$/.test(id4)) errs.push('身份证后四位需为 3 位数字 + 1 位数字或 X');
+
+    if(errs.length){
+      setResult(
+        '<div class="error-card">'+
+          '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>'+
+          '<div><b>信息不完整</b><p>'+errs.join('；')+'</p></div>'+
+        '</div>'
+      );
+      return;
+    }
+
+    btnQ.classList.add('loading');
+    btnQ.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> 查询中…';
+    setTimeout(function(){
+      btnQ.classList.remove('loading');
+      btnQ.innerHTML = '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg> 立即查询';
+      var hits = S.filter(function(s){ return s.n === name && s.d === id4; });
+      if(hits.length === 0){
+        setResult(
+          '<div class="error-card">'+
+            '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>'+
+            '<div><b>未匹配到记录</b><p>姓名与身份证后四位不匹配，请核对后重试；如确认无误，请与辅导员联系。</p></div>'+
+          '</div>'
+        );
+        return;
+      }
+      var s = hits[0];
+      var rankTxt = s.r === null ? '暂无' : String(s.r);
+      var html;
+      if(s.r === null){
+        html =
+          '<div class="card result-card">'+
+            '<div class="rc-head"><div class="big-r">—</div>'+
+              '<div class="rc-t"><b>'+esc(s.n)+'</b><span>'+esc(s.c)+'</span></div></div>'+
+            '<div class="rc-body">'+
+              '<div class="rc-grid">'+
+                '<div class="rc-cell"><span>学分加权平均分</span><b>暂无成绩数据</b></div>'+
+                '<div class="rc-cell"><span>年级排名</span><b>—</b></div>'+
+              '</div>'+
+              '<div class="rc-note">本学年成绩表中未查询到该生成绩记录，请与辅导员联系核实。</div>'+
+            '</div></div>';
+      }else{
+        var pct = Math.round((1 - (s.r - 1) / M.withScore) * 100);
+        html =
+          '<div class="card result-card">'+
+            '<div class="rc-head">'+
+              '<div class="big-r">'+rankTxt+'<small> / '+M.withScore+'</small></div>'+
+              '<div class="rc-t"><b>'+esc(s.n)+'</b><span>'+esc(s.c)+'</span></div>'+
+            '</div>'+
+            '<div class="rc-body">'+
+              '<div class="rc-grid">'+
+                '<div class="rc-cell"><span>学分加权平均分</span><b class="'+(s.r<=3?'gold':'')+'">'+s.s.toFixed(2)+'</b></div>'+
+                '<div class="rc-cell"><span>年级排名</span><b>'+rankTxt+' 名</b></div>'+
+                '<div class="rc-cell"><span>成绩位次</span><b>前 '+pct+'%</b></div>'+
+                '<div class="rc-cell"><span>排名区间</span><b>'+(s.r<=TOP?'前 '+TOP+' 名（公开榜）':'第 '+TOP+' 名之后')+'</b></div>'+
+              '</div>'+
+              '<div class="rc-note">排名依据：学分加权平均分，同分同名次。'+(s.r<=TOP?'该生已列入公开排行榜，可在「排行榜」页查看。':'该生排名位于公开榜之外，本查询结果仅供本人查看，请勿外传。')+'</div>'+
+            '</div></div>';
+      }
+      setResult(html);
+    }, 420);
+  });
+
+  /* 输入联动：查询后清空旧结果 */
+  ['q-name','q-id4'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(){ if(area.innerHTML) area.innerHTML=''; });
+  });
+
+  /* ---------- 初始化 ---------- */
+  renderBoard();
+})();
+</script>
+</body>
+</html>
