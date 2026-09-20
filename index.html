@@ -346,10 +346,9 @@ footer.site{
         查询规则说明
       </h3>
       <ul>
-        <li>排名范围：本学年有成绩的 <b id="rule-total"></b> 名学生，无成绩者不参与排名。</li>
+        <li>排名范围：本学年有成绩的 <b id="rule-total"></b> 名学生（无成绩者已剔除）。</li>
         <li>排名依据：2025—2026 学年学分加权平均分（同分同名次）。</li>
         <li>公开展示前 50 名，其余同学通过姓名 + 身份证后四位核验后查询。</li>
-        <li>若提示「无成绩·不参与排名」，表示该生本学年成绩表中无记录，不参与本次排名，请与辅导员联系核实。</li>
       </ul>
     </div>
   </section>
@@ -360,7 +359,7 @@ footer.site{
 
   <footer class="site">
     数据来源：2024级学生2025-2026学年成绩（药学院）<br>
-    数据截至 2026-09-16 · 仅供查询参考
+    数据截至 2026-09-20 · 仅供查询参考
   </footer>
 </div>
 
@@ -495,7 +494,7 @@ footer.site{
     var foot = document.getElementById('board-foot');
     if(curClass === '全部'){
       foot.innerHTML = '已展示排名前 '+show.length+' 名 · 共 '+M.withScore+' 人参与排名（同分同名次）<br>'+
-        '无成绩的 '+M.noScore+' 人不参与排名 · 前 50 名之外请通过「个人查询」查看本人排名';
+        '前 50 名之外请通过「个人查询」查看本人排名';
     }else{
       foot.innerHTML = '当前班级「'+esc(curClass)+'」前 '+show.length+' 名 · 其他班级同学请切换筛选查看';
     }
