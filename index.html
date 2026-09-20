@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="theme-color" content="#0f2a6b">
-<meta name="description" content="2024级本科药学（需排名名单）2025-2026学年学分加权平均分排名查询">
+<meta name="description" content="2024级本科药学2025-2026学年考试成绩（学分加权平均分）与综合测评分（综测）排名查询">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232563eb'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle'%3E%F0%9F%8F%86%3C/text%3E%3C/svg%3E">
-<title>药本考试成绩排名及查询</title>
+<title>药本考试成绩与综测分排名查询</title>
 <style>
 :root{
   --bg:#eef3fb;
@@ -105,6 +105,22 @@ button,input{font-family:inherit;font-size:inherit}
   border-radius:999px;padding:7px 14px;font-size:12.5px;cursor:pointer;transition:all .18s ease;
 }
 .chip.active{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+
+/* ===== 榜单切换（考试分榜 / 综测分榜） ===== */
+.board-mode{
+  display:flex;gap:6px;margin:0 0 12px;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;
+  box-shadow:0 2px 8px rgba(24,48,112,.05);
+}
+.board-mode .bm{
+  flex:1;border:none;background:transparent;color:var(--ink-2);
+  border-radius:11px;padding:9px 0;font-size:13.5px;font-weight:600;
+  cursor:pointer;transition:all .18s ease;
+}
+.board-mode .bm.active{
+  background:linear-gradient(135deg,#2563eb,#0ea5e9);color:#fff;
+  box-shadow:0 4px 12px rgba(37,99,235,.3);
+}
 
 /* ===== TOP3 ===== */
 .top3{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
@@ -212,6 +228,7 @@ button,input{font-family:inherit;font-size:inherit}
 .rc-cell span{font-size:11.5px;color:var(--ink-2);display:block}
 .rc-cell b{font-size:16px;margin-top:3px;display:block}
 .rc-cell b.gold{color:#d97706}
+.rc-cell.rc-full{grid-column:1/-1}
 .rc-note{font-size:12px;color:var(--ink-2);line-height:1.7;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
 .rc-note b{color:var(--blue)}
 .error-card{
@@ -274,8 +291,8 @@ footer.site{
 <header class="hero">
   <div>
     <span class="kicker">🎓 药学院 · 2024级本科药学</span>
-    <h1>药本考试成绩排名及查询</h1>
-    <p class="sub" id="hero-sub">2025—2026学年 · 学分加权平均分排名</p>
+    <h1>药本考试成绩与综测分排名</h1>
+    <p class="sub" id="hero-sub">2025—2026学年 · 学分加权平均分 + 综合测评分（综测）排名</p>
     <div class="stats" id="hero-stats"></div>
   </div>
 </header>
@@ -298,7 +315,11 @@ footer.site{
   <section id="panel-board" role="tabpanel" aria-labelledby="tab-board">
     <div class="banner">
       <svg viewBox="0 0 24 24"><path d="M12 3 4 21M12 3l8 18M12 3v18"/><path d="M7 15h10"/></svg>
-      <div>公开展示参与排名学生中前 <b>50</b> 名同学；其余同学请通过「个人查询」核验后查看本人成绩与排名。</div>
+      <div>公开展示参与排名学生中前 <b>50</b> 名（考试成绩榜与综测分榜双榜）；其余同学请通过「个人查询」核验后查看本人成绩与排名。</div>
+    </div>
+    <div class="board-mode" id="board-mode" role="tablist" aria-label="榜单切换">
+      <button class="bm active" data-mode="exam" role="tab" aria-selected="true">考试分榜</button>
+      <button class="bm" data-mode="zong" role="tab" aria-selected="false">综测分榜</button>
     </div>
     <div class="chips" id="chips" role="tablist" aria-label="班级筛选"></div>
     <div class="top3" id="top3"></div>
@@ -313,7 +334,7 @@ footer.site{
         <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 3.5 2 5.4 4 8s1.5 5 3 5 1-2.4 3-5 4-4.5 4-8a7 7 0 0 0-7-7Z"/><circle cx="12" cy="9" r="2.5"/></svg>
         查询我的成绩
       </h2>
-      <p class="desc">输入本人<b>姓名</b>与<b>身份证后四位</b>进行身份核验，即可查询本人的学分加权平均分与年级排名。</p>
+      <p class="desc">输入本人<b>姓名</b>与<b>身份证后四位</b>进行身份核验，即可查询本人的考试成绩（学分加权平均分）、平时分（德育）与综合测评分（综测）及年级排名。</p>
 
       <div class="field">
         <label for="q-name">姓名</label>
@@ -346,8 +367,9 @@ footer.site{
         查询规则说明
       </h3>
       <ul>
-        <li>排名范围：本学年有成绩的 <b id="rule-total"></b> 名学生（无成绩者已剔除）。</li>
-        <li>排名依据：2025—2026 学年学分加权平均分（同分同名次）。</li>
+        <li>排名范围：本学年参与排名的 <b id="rule-total"></b> 名学生（以排名总表名单为准）。</li>
+        <li>考试成绩 = 学分加权平均分；综测分 = 加权平均分×0.8 + 平时成绩（德育）×0.2。</li>
+        <li>考试成绩与综测分均按全年级排名（同分同名次）；前10% = 排名≤39，前50% = 排名≤196。</li>
         <li>公开展示前 50 名，其余同学通过姓名 + 身份证后四位核验后查询。</li>
       </ul>
     </div>
@@ -358,8 +380,8 @@ footer.site{
   </div>
 
   <footer class="site">
-    数据来源：2024级学生2025-2026学年成绩（药学院）<br>
-    数据截至 2026-09-20 · 仅供查询参考
+    数据来源：药本2025-2026学年成绩排名总表 + 综测汇总数据（德育按红黄牌/任务分与各班综测文件）<br>
+    数据截至 2026-09-21 · 仅供查询参考
   </footer>
 </div>
 
@@ -446,8 +468,22 @@ footer.site{
     return String(r);
   }
 
+  var boardMode = 'exam';
+  var modeEl = document.getElementById('board-mode');
+  modeEl.addEventListener('click', function(e){
+    var b = e.target.closest('.bm');
+    if(!b) return;
+    boardMode = b.getAttribute('data-mode');
+    modeEl.querySelectorAll('.bm').forEach(function(x){ x.classList.toggle('active', x === b); });
+    renderBoard();
+  });
+
   function renderBoard(){
-    var ranked = S.filter(function(s){ return s.r !== null; });
+    var isZong = boardMode === 'zong';
+    var rankOf = isZong ? function(s){ return s.zr; } : function(s){ return s.r; };
+    var scoreOf = isZong ? function(s){ return s.z; } : function(s){ return s.s; };
+    var label = isZong ? '综合测评分' : '学分加权平均分';
+    var ranked = S.filter(function(s){ return rankOf(s) !== null && rankOf(s) !== undefined; });
     var pool = curClass === '全部' ? ranked : ranked.filter(function(s){ return s.c === curClass; });
     var show = pool.slice(0, TOP);
     var top3 = show.slice(0, 3);
@@ -462,12 +498,12 @@ footer.site{
         var crown = i === 0 ? '👑 ' : '';
         return (
           '<div class="podium">'+
-            '<div class="medal">'+medalText(s.r)+'</div>'+
+            '<div class="medal">'+medalText(rankOf(s))+'</div>'+
             '<div class="info">'+
               '<div class="nm">'+crown+esc(s.n)+'</div>'+
               '<div class="cls">'+esc(s.c)+'</div>'+
             '</div>'+
-            '<div class="sc"><b>'+s.s.toFixed(2)+'</b><span>学分加权平均分</span></div>'+
+            '<div class="sc"><b>'+scoreOf(s).toFixed(2)+'</b><span>'+label+'</span></div>'+
           '</div>'
         );
       }).join('');
@@ -476,16 +512,16 @@ footer.site{
     /* 列表 */
     var listEl = document.getElementById('board-list');
     listEl.innerHTML = rest.map(function(s, i){
-      var pct = Math.max(2, Math.round((1 - (s.r - 1) / M.withScore) * 100));
+      var pct = Math.max(2, Math.round((1 - (rankOf(s) - 1) / M.withScore) * 100));
       return (
         '<div class="row" style="animation-delay:'+(i*28)+'ms">'+
-          '<div class="rank-badge '+medalCls(s.r)+'">'+s.r+'</div>'+
+          '<div class="rank-badge '+medalCls(rankOf(s))+'">'+rankOf(s)+'</div>'+
           '<div class="info">'+
             '<div class="nm">'+esc(s.n)+'</div>'+
             '<div class="cls">'+esc(s.c)+'</div>'+
             '<div class="pctbar"><i style="width:'+pct+'%"></i></div>'+
           '</div>'+
-          '<div class="sc"><b class="'+(s.r<=3?'gold':'')+'">'+s.s.toFixed(2)+'</b><span>学分加权平均分</span></div>'+
+          '<div class="sc"><b class="'+(rankOf(s)<=3?'gold':'')+'">'+scoreOf(s).toFixed(2)+'</b><span>'+label+'</span></div>'+
         '</div>'
       );
     }).join('');
@@ -541,34 +577,37 @@ footer.site{
         return;
       }
       var s = hits[0];
-      var rankTxt = s.r === null ? '暂无' : String(s.r);
       var html;
-      if(s.r === null){
+      if(s.zr === null || s.zr === undefined){
         html =
           '<div class="card result-card">'+
             '<div class="rc-head"><div class="big-r">—</div>'+
               '<div class="rc-t"><b>'+esc(s.n)+'</b><span>'+esc(s.c)+'</span></div></div>'+
             '<div class="rc-body">'+
               '<div class="rc-grid">'+
-                '<div class="rc-cell"><span>学分加权平均分</span><b>无成绩</b></div>'+
-                '<div class="rc-cell"><span>本次排名</span><b>不参与</b></div>'+
+                '<div class="rc-cell"><span>考试成绩</span><b>无成绩</b></div>'+
+                '<div class="rc-cell"><span>综测排名</span><b>不参与</b></div>'+
               '</div>'+
-              '<div class="rc-note">本学年成绩表中无该生成绩记录，<b>不参与本次排名</b>；如有疑问请联系辅导员核实。</div>'+
+              '<div class="rc-note">名单中无该生排名记录，<b>不参与本次排名</b>；如有疑问请联系辅导员核实。</div>'+
             '</div></div>';
       }else{
-        var pct = Math.round((1 - (s.r - 1) / M.withScore) * 100);
         html =
           '<div class="card result-card">'+
             '<div class="rc-head">'+
-              '<div class="big-r">'+rankTxt+'<small> / '+M.withScore+'</small></div>'+
+              '<div class="big-r">'+s.zr+'<small> / '+M.withScore+'</small></div>'+
               '<div class="rc-t"><b>'+esc(s.n)+'</b><span>'+esc(s.c)+'</span></div>'+
             '</div>'+
             '<div class="rc-body">'+
               '<div class="rc-grid">'+
-                '<div class="rc-cell"><span>学分加权平均分</span><b class="'+(s.r<=3?'gold':'')+'">'+s.s.toFixed(2)+'</b></div>'+
-                '<div class="rc-cell"><span>年级排名</span><b>'+rankTxt+' 名</b></div>'+
+                '<div class="rc-cell"><span>考试分（学分加权平均分）</span><b class="'+(s.r<=3?'gold':'')+'">'+s.s.toFixed(2)+'</b></div>'+
+                '<div class="rc-cell"><span>考试分排名</span><b>'+s.r+' 名</b></div>'+
+                '<div class="rc-cell"><span>平时分（德育·100分制）</span><b>'+s.p.toFixed(2)+'</b></div>'+
+                '<div class="rc-cell"><span>综测分</span><b class="gold">'+s.z.toFixed(2)+'</b></div>'+
+                '<div class="rc-cell"><span>综测排名</span><b>'+s.zr+' 名</b></div>'+
+                '<div class="rc-cell"><span>考试分 前10% / 前50%</span><b>'+s.g10+' / '+s.g50+'</b></div>'+
+                '<div class="rc-cell rc-full"><span>综测分 前10% / 前50%</span><b>'+s.z10+' / '+s.z50+'</b></div>'+
               '</div>'+
-              '<div class="rc-note">排名依据：学分加权平均分，同分同名次。'+(s.r<=TOP?'该生已列入公开排行榜，可在「排行榜」页查看。':'该生排名位于公开榜之外，本查询结果仅供本人查看，请勿外传。')+'</div>'+
+              '<div class="rc-note">综测分 = 加权平均分×0.8 + 平时成绩（德育）×0.2，全年级同分同名次；前10% = 排名≤39，前50% = 排名≤196。'+(s.zr<=TOP?'该生已列入公开排行榜，可在「排行榜」页查看。':'该生排名位于公开榜之外，本查询结果仅供本人查看，请勿外传。')+'</div>'+
             '</div></div>';
       }
       setResult(html);
