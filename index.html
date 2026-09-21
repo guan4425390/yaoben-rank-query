@@ -469,7 +469,8 @@ footer.site{
     var rankOf = isZong ? function(s){ return s.zr; } : function(s){ return s.r; };
     var scoreOf = isZong ? function(s){ return s.z; } : function(s){ return s.s; };
     var label = isZong ? '综合测评分' : '学分加权平均分';
-    var ranked = S.filter(function(s){ return rankOf(s) !== null && rankOf(s) !== undefined; });
+    var ranked = S.filter(function(s){ return rankOf(s) !== null && rankOf(s) !== undefined; })
+      .sort(function(a,b){ return rankOf(a) - rankOf(b); });
     var show = ranked.slice(0, TOP);
     var top3 = show.slice(0, 3);
     var rest = show.slice(3);
