@@ -315,13 +315,12 @@ footer.site{
   <section id="panel-board" role="tabpanel" aria-labelledby="tab-board">
     <div class="banner">
       <svg viewBox="0 0 24 24"><path d="M12 3 4 21M12 3l8 18M12 3v18"/><path d="M7 15h10"/></svg>
-      <div>公开展示参与排名学生中前 <b>50</b> 名（考试成绩榜与综测分榜双榜）；其余同学请通过「个人查询」核验后查看本人成绩与排名。</div>
+      <div>公开展示全年级（一至六班）参与排名学生中前 <b>50</b> 名，按年级排名直排（考试成绩榜与综测分榜双榜）；其余同学请通过「个人查询」核验后查看本人成绩与排名。</div>
     </div>
     <div class="board-mode" id="board-mode" role="tablist" aria-label="榜单切换">
       <button class="bm active" data-mode="exam" role="tab" aria-selected="true">考试分榜</button>
       <button class="bm" data-mode="zong" role="tab" aria-selected="false">综测分榜</button>
     </div>
-    <div class="chips" id="chips" role="tablist" aria-label="班级筛选"></div>
     <div class="top3" id="top3"></div>
     <div class="list" id="board-list"></div>
     <div class="board-foot" id="board-foot"></div>
@@ -370,7 +369,7 @@ footer.site{
         <li>排名范围：本学年参与排名的 <b id="rule-total"></b> 名学生（以排名总表名单为准）。</li>
         <li>考试成绩 = 学分加权平均分；综测分 = 加权平均分×0.8 + 平时成绩（德育）×0.2。</li>
         <li>考试成绩与综测分均按全年级排名（同分同名次）；前10% = 排名≤39，前50% = 排名≤196。</li>
-        <li>公开展示前 50 名，其余同学通过姓名 + 身份证后四位核验后查询。</li>
+        <li>公开展示全年级前 50 名（一至六班直排，不区分班级），其余同学通过姓名 + 身份证后四位核验后查询。</li>
       </ul>
     </div>
   </section>
@@ -442,19 +441,6 @@ footer.site{
     b.addEventListener('click', function(){ switchPanel(b.getAttribute('data-panel')); });
   });
 
-  /* ---------- 班级筛选 ---------- */
-  var curClass = '全部';
-  var chipsEl = document.getElementById('chips');
-  chipsEl.innerHTML = '<button class="chip active" data-c="全部">全部班级</button>' +
-    allClasses.map(function(c){ return '<button class="chip" data-c="'+c.replace(/"/g,'&quot;')+'">'+c.replace(/2024本科药学/g,'')+'</button>'; }).join('');
-  chipsEl.addEventListener('click', function(e){
-    var btn = e.target.closest('.chip');
-    if(!btn) return;
-    curClass = btn.getAttribute('data-c');
-    chipsEl.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('active', c === btn); });
-    renderBoard();
-  });
-
   /* ---------- 榜单渲染 ---------- */
   function esc(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
 
@@ -484,8 +470,7 @@ footer.site{
     var scoreOf = isZong ? function(s){ return s.z; } : function(s){ return s.s; };
     var label = isZong ? '综合测评分' : '学分加权平均分';
     var ranked = S.filter(function(s){ return rankOf(s) !== null && rankOf(s) !== undefined; });
-    var pool = curClass === '全部' ? ranked : ranked.filter(function(s){ return s.c === curClass; });
-    var show = pool.slice(0, TOP);
+    var show = ranked.slice(0, TOP);
     var top3 = show.slice(0, 3);
     var rest = show.slice(3);
 
@@ -528,12 +513,8 @@ footer.site{
 
     /* 尾部说明 */
     var foot = document.getElementById('board-foot');
-    if(curClass === '全部'){
-      foot.innerHTML = '已展示排名前 '+show.length+' 名 · 共 '+M.withScore+' 人参与排名（同分同名次）<br>'+
-        '前 50 名之外请通过「个人查询」查看本人排名';
-    }else{
-      foot.innerHTML = '当前班级「'+esc(curClass)+'」前 '+show.length+' 名 · 其他班级同学请切换筛选查看';
-    }
+    foot.innerHTML = '已展示全年级排名前 '+show.length+' 名（一至六班直排）· 共 '+M.withScore+' 人参与排名（同分同名次）<br>'+
+      '前 50 名之外请通过「个人查询」查看本人排名';
   }
 
   /* ---------- 个人查询 ---------- */
